@@ -1,45 +1,58 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-var app = {
-    initialize: function() {
-        this.bindEvents();
-    },
-    bindEvents: function() {
-        document.addEventListener('deviceready', this.onDeviceReady, false);
-    },
-    onDeviceReady: function() {
-    	$(document).swiperight(function() {
-    		var page = $('#content nav').attr('data-previous');
-    		app.loadPage(page);
-    	});
-    	$(document).swipeleft(function() {
-    		var page = $('#content nav').attr('data-next');
-    		app.loadPage(page);
-    	});
+if (!String.prototype.format) {
+	String.prototype.format = function() {
+		var args = arguments;
+		return this.replace(/{(\d+)}/g, function(match, number) {
+			return typeof args[number] != 'undefined' ? args[number] : match;
+		});
+	};
+}
 
-    	app.loadPage('default');
-    },
-    loadPage: function(page) {
-    	if (page) {
-	    	return $('#content').load("views/"+page+".html", function() { 
-	    		$(this).trigger('create');
-	    	});
-    	}
-    }
+var app = {
+	initialize : function() {
+		this.bindEvents();
+	},
+
+	bindEvents : function() {
+		document.addEventListener('deviceready', this.onDeviceReady, false);
+		document.addEventListener('touchmove', function(e) {
+			e.preventDefault();
+		}, false);
+	},
+
+	onDeviceReady : function() {
+		app.receivedEvent('deviceready');
+	},
+
+	receivedEvent : function(id) {
+		console.log('Received Event: ' + id);
+
+		var scroller = "appEl";
+
+		// myScroll = new iScroll(scroller, { hScroll: true, vScroll: false});
+
+		navigator.globalization.getLocaleName(function(locale) {
+			console.log(JSON.stringify(locale));
+			var language = locale.value.replace(/(\w{2})_(.{2})/, "$1");
+
+			var strings = "res/strings/{0}.json".format(language);
+			console.log("reading: {0}".format(strings));
+
+			$.ajax({
+				url : strings,
+				dataType : "json"
+			}).done(function(json) {
+				console.log(JSON.stringify(json));
+
+				$("h1").text(json.title);
+				$(receivedElement).text(json.ready);
+			}).error(function(e) {
+				console.log(JSON.stringify(e));
+			});
+
+			// $(parentElement).slideDown(2000);
+		}, function(e) {
+			console.log(JSON.stringify(e));
+			alert('Error getting language\n');
+		});
+	}
 };

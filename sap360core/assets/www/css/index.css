@@ -57,6 +57,7 @@ body {
     padding:180px 0px 0px 0px;     /* image height is 200px (bottom 20px are overlapped with text) */
     margin:-115px 0px 0px -112px;  /* offset vertical: half of image height and text area height */
                                    /* offset horizontal: half of text area width */
+                                   
 }
 
 /* Landscape layout (with min-width) */
@@ -76,6 +77,7 @@ h1 {
     overflow:visible;
     padding:0px;
     text-align:center;
+    
 }
 
 .event {
@@ -95,6 +97,12 @@ h1 {
 .event.received {
     background-color:#4B946A;
     display:none;
+}
+
+#demo {
+	position: relative;
+	left: -20px;
+	width: 100%;
 }
 
 @keyframes fade {
